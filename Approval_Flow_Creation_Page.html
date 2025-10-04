@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Approval Flow</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #fff; color: #212529; font-family: Arial, sans-serif; }
+    .card { margin: 20px 0; border-radius: 12px; box-shadow: 0 8px 15px rgba(0,0,0,0.05); padding: 20px; }
+    .step-list { list-style: none; padding: 0; }
+    .step-list li { padding: 10px; margin-bottom: 8px; border: 1px solid #dee2e6; border-radius: 8px; background: #f8f9fa; cursor: move; }
+    .btn-dark { background-color: #212529; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Approval Flow Management</h2>
+  
+  <div class="card">
+    <h5>Create New Approval Flow</h5>
+    <form id="flowForm">
+      <div class="mb-3">
+        <label class="form-label">Flow Name</label>
+        <input type="text" class="form-control" id="flowName" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Steps (Drag to reorder)</label>
+        <ul class="step-list" id="stepsList">
+          <!-- Steps will appear here -->
+        </ul>
+        <input type="text" id="newStep" class="form-control mt-2" placeholder="Enter approver name or role">
+        <button type="button" class="btn btn-dark mt-2" id="addStep">Add Step</button>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Approval Rules</label>
+        <select class="form-select" id="approvalRule">
+          <option value="PERCENTAGE">Percentage Rule</option>
+          <option value="SPECIFIC">Specific Approver</option>
+          <option value="HYBRID">Hybrid</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-dark">Save Flow</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h5>Existing Flows</h5>
+    <ul id="existingFlows">
+      <!-- Dummy data -->
+      <li>Manager → Finance → Director</li>
+      <li>Finance Only (60% rule)</li>
+      <li>CFO Auto Approve</li>
+    </ul>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const stepsList = document.getElementById('stepsList');
+  const addStepBtn = document.getElementById('addStep');
+  const newStepInput = document.getElementById('newStep');
+
+  addStepBtn.addEventListener('click', () => {
+    if(newStepInput.value.trim() !== ''){
+      const li = document.createElement('li');
+      li.textContent = newStepInput.value;
+      stepsList.appendChild(li);
+      newStepInput.value = '';
+    }
+  });
+
+  document.getElementById('flowForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    alert('Approval Flow saved successfully!');
+    stepsList.innerHTML = '';
+    document.getElementById('flowName').value = '';
+    document.getElementById('approvalRule').value = 'PERCENTAGE';
+  });
+</script>
+</body>
+</html>

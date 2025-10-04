@@ -1,0 +1,117 @@
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manager Dashboard - Team Expenses</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; color: #212529; font-family: Arial, sans-serif; }
+    .navbar { background-color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .navbar-brand { font-weight: bold; }
+    .nav-link { color: #212529 !important; }
+    .nav-link:hover { color: #0d6efd !important; }
+    .container-card { margin-top: 40px; }
+    .card { border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 30px; }
+    table th, table td { vertical-align: middle !important; }
+    footer { text-align: center; padding: 15px; margin-top: 40px; border-top: 1px solid #dee2e6; color: #6c757d; }
+    .status-pending { color: orange; font-weight: bold; }
+    .status-approved { color: green; font-weight: bold; }
+    .status-rejected { color: red; font-weight: bold; }
+    .filter-btn { margin-right: 10px; }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Expense Manager</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="manager-pending.html">Pending Approvals</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Team Expenses</a></li>
+        <li class="nav-item"><a class="nav-link" href="login.html">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container container-card">
+
+  <!-- Filters -->
+  <div class="d-flex mb-3">
+    <button class="btn btn-outline-dark filter-btn" onclick="filterExpenses('ALL')">All</button>
+    <button class="btn btn-outline-dark filter-btn" onclick="filterExpenses('PENDING')">Pending</button>
+    <button class="btn btn-outline-dark filter-btn" onclick="filterExpenses('APPROVED')">Approved</button>
+    <button class="btn btn-outline-dark filter-btn" onclick="filterExpenses('REJECTED')">Rejected</button>
+  </div>
+
+  <!-- Team Expenses Table -->
+  <div class="card">
+    <h4>Team Expenses History</h4>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Submitter</th>
+          <th>Date</th>
+          <th>Category</th>
+          <th>Amount (Original / INR)</th>
+          <th>Status</th>
+          <th>View</th>
+        </tr>
+      </thead>
+      <tbody id="teamTable"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<footer>&copy; 2025 Expense Management. All rights reserved.</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const allExpenses = [
+    {id:1, submitter:'e1@acme.test', date:'2025-10-01', category:'Travel', amount:'100 USD', converted:'8400 INR', status:'PENDING'},
+    {id:2, submitter:'e1@acme.test', date:'2025-09-28', category:'Food', amount:'30 EUR', converted:'2760 INR', status:'APPROVED'},
+    {id:3, submitter:'e2@acme.test', date:'2025-10-02', category:'Hotel', amount:'200 USD', converted:'16800 INR', status:'REJECTED'},
+    {id:4, submitter:'e2@acme.test', date:'2025-10-03', category:'Supplies', amount:'50 USD', converted:'4200 INR', status:'APPROVED'}
+  ];
+
+  const teamTable = document.getElementById('teamTable');
+
+  function renderTable(expenses){
+    teamTable.innerHTML = '';
+    expenses.forEach(exp => {
+      const tr = document.createElement('tr');
+      const statusClass = exp.status === 'PENDING' ? 'status-pending' : (exp.status === 'APPROVED' ? 'status-approved' : 'status-rejected');
+      tr.innerHTML = `<td>${exp.submitter}</td>
+                      <td>${exp.date}</td>
+                      <td>${exp.category}</td>
+                      <td>${exp.amount} / ${exp.converted}</td>
+                      <td class="${statusClass}">${exp.status}</td>
+                      <td><button class="btn btn-sm btn-info" onclick="viewExpense(${exp.id})">View</button></td>`;
+      teamTable.appendChild(tr);
+    });
+  }
+
+  function filterExpenses(status){
+    if(status === 'ALL'){
+      renderTable(allExpenses);
+    } else {
+      renderTable(allExpenses.filter(e => e.status === status));
+    }
+  }
+
+  function viewExpense(id){
+    const exp = allExpenses.find(e => e.id === id);
+    alert(`Expense Details:\nSubmitter: ${exp.submitter}\nDate: ${exp.date}\nCategory: ${exp.category}\nAmount: ${exp.amount} / ${exp.converted}\nStatus: ${exp.status}`);
+  }
+
+  renderTable(allExpenses);
+</script>
+</body>
+</html>

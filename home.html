@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Expense Management</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    /* Modern White Theme */
+    body {
+      background-color: #f8f9fa;
+      color: #212529;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .navbar {
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+
+    .nav-link {
+      color: #212529 !important;
+    }
+
+    .nav-link:hover {
+      color: #0d6efd !important;
+    }
+
+    .dashboard-container {
+      padding: 40px 20px;
+    }
+
+    .card {
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+    }
+
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .card-body h5 {
+      margin-bottom: 15px;
+      font-weight: bold;
+      color: #212529;
+    }
+
+    .card-body ul {
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .card-body ul li {
+      margin-bottom: 10px;
+    }
+
+    .card-body ul li a {
+      text-decoration: none;
+      color: #0d6efd;
+      font-weight: 500;
+    }
+
+    .card-body ul li a:hover {
+      text-decoration: underline;
+    }
+
+    .welcome-text {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      margin-top: 40px;
+      border-top: 1px solid #dee2e6;
+      color: #6c757d;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Expense Manager</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="home.html">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="login.html">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Dashboard Cards -->
+<div class="dashboard-container container">
+  <div class="welcome-text">
+    <h3>Welcome, <span id="username">John Doe</span>!</h3>
+    <p>Select an action below:</p>
+  </div>
+
+  <div class="row g-4">
+    <!-- Admin Actions -->
+    <div class="col-md-4">
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1556740761-1a741367b93e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400" alt="Admin">
+        <div class="card-body">
+          <h5>Admin</h5>
+          <ul>
+            <li><a href="#">Manage Users</a></li>
+            <li><a href="#">Company Settings</a></li>
+            <li><a href="#">Approval Flows</a></li>
+            <li><a href="#">Audit Logs</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manager Actions -->
+    <div class="col-md-4">
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1591696331112-cb1f7d64b44e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400" alt="Manager">
+        <div class="card-body">
+          <h5>Manager</h5>
+          <ul>
+            <li><a href="#">Pending Approvals</a></li>
+            <li><a href="#">Team Expenses</a></li>
+            <li><a href="#">Expense Reports</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Employee Actions -->
+    <div class="col-md-4">
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1588702547923-7093a6c3ba33?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400" alt="Employee">
+        <div class="card-body">
+          <h5>Employee</h5>
+          <ul>
+            <li><a href="#">Submit Expense</a></li>
+            <li><a href="#">My Expenses</a></li>
+            <li><a href="#">Upload Receipts</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  &copy; 2025 Expense Management. All rights reserved.
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Demo: Display logged-in user's name
+  document.getElementById('username').textContent = "John Doe"; // Replace with dynamic value after login
+</script>
+
+</body>
+</html>

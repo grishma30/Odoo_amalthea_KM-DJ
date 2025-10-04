@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submit Expense - Expense Management</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      color: #212529;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .navbar {
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+    }
+
+    .nav-link {
+      color: #212529 !important;
+    }
+
+    .nav-link:hover {
+      color: #0d6efd !important;
+    }
+
+    .container-card {
+      margin-top: 40px;
+      max-width: 700px;
+    }
+
+    .card {
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+
+    .card h4 {
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .form-control {
+      border-radius: 8px;
+    }
+
+    .btn-primary {
+      border-radius: 8px;
+    }
+
+    #receiptPreview {
+      margin-top: 15px;
+      max-width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    .ocr-btn {
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="home.html">Expense Manager</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="home.html">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="login.html">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Submit Expense Form -->
+<div class="container container-card">
+  <div class="card">
+    <h4>Submit Expense</h4>
+    <form id="expenseForm">
+      <div class="mb-3">
+        <label for="amount" class="form-label">Amount</label>
+        <input type="number" step="0.01" class="form-control" id="amount" placeholder="Enter amount" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="currency" class="form-label">Currency</label>
+        <select class="form-select" id="currency" required>
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="INR" selected>INR</option>
+          <option value="GBP">GBP</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="date" class="form-label">Date</label>
+        <input type="date" class="form-control" id="date" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="category" class="form-label">Category</label>
+        <select class="form-select" id="category" required>
+          <option value="Travel">Travel</option>
+          <option value="Food">Food</option>
+          <option value="Accommodation">Accommodation</option>
+          <option value="Office Supplies">Office Supplies</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        <textarea class="form-control" id="description" rows="3" placeholder="Enter description" required></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="receipt" class="form-label">Upload Receipt</label>
+        <input type="file" class="form-control" id="receipt" accept="image/*" required>
+      </div>
+
+      <button type="button" class="btn btn-secondary ocr-btn" id="scanReceipt">Scan Receipt (OCR)</button>
+
+      <img id="receiptPreview" src="#" alt="Receipt Preview" style="display:none;">
+
+      <button type="submit" class="btn btn-primary w-100 mt-3">Submit Expense</button>
+    </form>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Preview uploaded receipt
+  const receiptInput = document.getElementById('receipt');
+  const receiptPreview = document.getElementById('receiptPreview');
+
+  receiptInput.addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if(file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        receiptPreview.src = e.target.result;
+        receiptPreview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Simulated OCR button
+  const scanBtn = document.getElementById('scanReceipt');
+  scanBtn.addEventListener('click', function() {
+    alert("OCR simulated: Amount, Date, Category auto-filled!");
+    // You can add JS code here to auto-fill fields for demo
+    document.getElementById('amount').value = "1250.00";
+    document.getElementById('date').value = "2025-10-04";
+    document.getElementById('category').value = "Travel";
+    document.getElementById('description').value = "Taxi fare from airport to hotel";
+  });
+
+  // Form submit
+  const expenseForm = document.getElementById('expenseForm');
+  expenseForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert("Expense Submitted Successfully!");
+    expenseForm.reset();
+    receiptPreview.style.display = 'none';
+  });
+</script>
+
+</body>
+</html>

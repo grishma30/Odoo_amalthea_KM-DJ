@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Dashboard - Expenses</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; color: #212529; font-family: Arial, sans-serif; }
+    .navbar { background-color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .navbar-brand { font-weight: bold; }
+    .nav-link { color: #212529 !important; }
+    .nav-link:hover { color: #0d6efd !important; }
+    .container-card { margin-top: 40px; }
+    .card { border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 30px; }
+    table th, table td { vertical-align: middle !important; }
+    .status-pending { color: orange; font-weight: bold; }
+    .status-approved { color: green; font-weight: bold; }
+    .status-rejected { color: red; font-weight: bold; }
+    footer { text-align: center; padding: 15px; margin-top: 40px; border-top: 1px solid #dee2e6; color: #6c757d; }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Expense Manager</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#">Submit Expense</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">My Expenses</a></li>
+        <li class="nav-item"><a class="nav-link" href="login.html">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container container-card">
+
+  <!-- Submit Expense Form -->
+  <div class="card mb-4">
+    <h4>Submit New Expense</h4>
+    <form id="expenseForm">
+      <div class="row mb-3">
+        <div class="col-md-3">
+          <label class="form-label">Amount</label>
+          <input type="number" class="form-control" id="amount" required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Currency</label>
+          <select class="form-select" id="currency">
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="INR" selected>INR</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Category</label>
+          <select class="form-select" id="category" required>
+            <option>Travel</option>
+            <option>Food</option>
+            <option>Hotel</option>
+            <option>Supplies</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Date</label>
+          <input type="date" class="form-control" id="date" required>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" id="description" rows="2" required></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Receipt Upload</label>
+        <input type="file" class="form-control" id="receipt">
+      </div>
+
+      <button type="button" class="btn btn-dark" onclick="scanReceipt()">Scan Receipt (OCR)</button>
+      <button type="submit" class="btn btn-primary">Submit Expense</button>
+    </form>
+  </div>
+
+  <!-- Expense History Table -->
+  <div class="card">
+    <h4>My Expenses</h4>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Category</th>
+          <th>Amount (Original / INR)</th>
+          <th>Status</th>
+          <th>Receipt / OCR</th>
+        </tr>
+      </thead>
+      <tbody id="expenseTable"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<footer>&copy; 2025 Expense Management. All rights reserved.</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const companyCurrency = 'INR';
+  let expenses = [];
+
+  // Dummy OCR simulation
+  function scanReceipt() {
+    const dummyData = {
+      amount: Math.floor(Math.random() * 500 + 10),
+      currency: 'USD',
+      category: 'Travel',
+      date: new Date().toISOString().split('T')[0]
+    };
+    document.getElementById('amount').value = dummyData.amount;
+    document.getElementById('currency').value = dummyData.currency;
+    document.getElementById('category').value = dummyData.category;
+    document.getElementById('date').value = dummyData.date;
+    alert('OCR simulated: Amount, Date, Category auto-filled!');
+  }
+
+  // Submit expense
+  document.getElementById('expenseForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const newExp = {
+      id: Date.now(),
+      date: document.getElementById('date').value,
+      category: document.getElementById('category').value,
+      amount: document.getElementById('amount').value + ' ' + document.getElementById('currency').value,
+      converted: convertCurrency(document.getElementById('amount').value, document.getElementById('currency').value),
+      status: 'PENDING',
+      receipt: document.getElementById('receipt').files.length > 0 ? document.getElementById('receipt').files[0].name : 'No file',
+      ocrData: 'Simulated OCR'
+    };
+    expenses.unshift(newExp);
+    renderTable(expenses);
+    this.reset();
+    alert('Expense submitted successfully!');
+  });
+
+  function convertCurrency(amount, currency){
+    // Dummy conversion
+    const rates = {USD: 84, EUR: 92, INR: 1};
+    return amount * rates[currency] + ' ' + companyCurrency;
+  }
+
+  function renderTable(data){
+    const table = document.getElementById('expenseTable');
+    table.innerHTML = '';
+    data.forEach(exp => {
+      const statusClass = exp.status === 'PENDING' ? 'status-pending' : (exp.status === 'APPROVED' ? 'status-approved' : 'status-rejected');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${exp.date}</td>
+                      <td>${exp.category}</td>
+                      <td>${exp.amount} / ${exp.converted}</td>
+                      <td class="${statusClass}">${exp.status}</td>
+                      <td>${exp.receipt} | ${exp.ocrData}</td>`;
+      table.appendChild(tr);
+    });
+  }
+
+  // Initial render
+  renderTable(expenses);
+</script>
+</body>
+</html>

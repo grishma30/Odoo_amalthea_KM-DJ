@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Expenses - Expense Management</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      color: #212529;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .navbar {
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .navbar-brand {
+      font-weight: bold;
+    }
+
+    .nav-link {
+      color: #212529 !important;
+    }
+
+    .nav-link:hover {
+      color: #0d6efd !important;
+    }
+
+    .container-card {
+      margin-top: 40px;
+    }
+
+    .card {
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+
+    .card h4 {
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    table th, table td {
+      vertical-align: middle !important;
+    }
+
+    .btn-view {
+      border-radius: 8px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 15px;
+      margin-top: 40px;
+      border-top: 1px solid #dee2e6;
+      color: #6c757d;
+    }
+
+    /* Modal image */
+    #modalReceipt {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="home.html">Expense Manager</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="submit-expense.html">Submit Expense</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="home.html">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="login.html">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- My Expenses Table -->
+<div class="container container-card">
+  <div class="card">
+    <h4>My Expenses</h4>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Category</th>
+          <th>Amount (Original)</th>
+          <th>Amount (Company Currency)</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="expensesTable">
+        <!-- Rows will be populated with JS -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Expense Details Modal -->
+<div class="modal fade" id="expenseModal" tabindex="-1" aria-labelledby="expenseModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="expenseModalLabel">Expense Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Date:</strong> <span id="modalDate"></span></p>
+        <p><strong>Category:</strong> <span id="modalCategory"></span></p>
+        <p><strong>Amount (Original):</strong> <span id="modalOriginalAmount"></span></p>
+        <p><strong>Amount (Company Currency):</strong> <span id="modalCompanyAmount"></span></p>
+        <p><strong>Description:</strong> <span id="modalDescription"></span></p>
+        <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+        <p><strong>Receipt:</strong></p>
+        <img id="modalReceipt" src="#" alt="Receipt">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  &copy; 2025 Expense Management. All rights reserved.
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // Sample data for demo
+  const expenses = [
+    {
+      date: '2025-10-01',
+      category: 'Travel',
+      originalAmount: '100 USD',
+      companyAmount: '8300 INR',
+      description: 'Taxi from airport',
+      status: 'Approved',
+      receipt: 'https://images.unsplash.com/photo-1588702547923-7093a6c3ba33?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400'
+    },
+    {
+      date: '2025-10-02',
+      category: 'Food',
+      originalAmount: '50 EUR',
+      companyAmount: '4500 INR',
+      description: 'Team lunch',
+      status: 'Pending',
+      receipt: 'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400'
+    },
+    {
+      date: '2025-10-03',
+      category: 'Accommodation',
+      originalAmount: '200 USD',
+      companyAmount: '16600 INR',
+      description: 'Hotel stay',
+      status: 'Rejected',
+      receipt: 'https://images.unsplash.com/photo-1568495248636-643f73c7a08c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400'
+    }
+  ];
+
+  const tableBody = document.getElementById('expensesTable');
+
+  expenses.forEach((exp, index) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${exp.date}</td>
+      <td>${exp.category}</td>
+      <td>${exp.originalAmount}</td>
+      <td>${exp.companyAmount}</td>
+      <td>${exp.status}</td>
+      <td><button class="btn btn-primary btn-sm btn-view" data-index="${index}" data-bs-toggle="modal" data-bs-target="#expenseModal">View</button></td>
+    `;
+    tableBody.appendChild(row);
+  });
+
+  // Modal population
+  const modalDate = document.getElementById('modalDate');
+  const modalCategory = document.getElementById('modalCategory');
+  const modalOriginalAmount = document.getElementById('modalOriginalAmount');
+  const modalCompanyAmount = document.getElementById('modalCompanyAmount');
+  const modalDescription = document.getElementById('modalDescription');
+  const modalStatus = document.getElementById('modalStatus');
+  const modalReceipt = document.getElementById('modalReceipt');
+
+  document.querySelectorAll('.btn-view').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const exp = expenses[this.dataset.index];
+      modalDate.textContent = exp.date;
+      modalCategory.textContent = exp.category;
+      modalOriginalAmount.textContent = exp.originalAmount;
+      modalCompanyAmount.textContent = exp.companyAmount;
+      modalDescription.textContent = exp.description;
+      modalStatus.textContent = exp.status;
+      modalReceipt.src = exp.receipt;
+    });
+  });
+</script>
+
+</body>
+</html>

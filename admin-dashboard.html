@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; color: #212529; font-family: Arial, sans-serif; }
+    .navbar { background-color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .navbar-brand { font-weight: bold; }
+    .nav-link { color: #212529 !important; }
+    .nav-link:hover { color: #0d6efd !important; }
+    .container-card { margin-top: 30px; }
+    .card { border-radius: 12px; box-shadow: 0 8px 15px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 25px; }
+    table th, table td { vertical-align: middle !important; }
+    .status-pending { color: orange; font-weight: bold; }
+    .status-approved { color: green; font-weight: bold; }
+    .status-rejected { color: red; font-weight: bold; }
+    footer { text-align: center; padding: 15px; margin-top: 40px; border-top: 1px solid #dee2e6; color: #6c757d; }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Expense Manager Admin</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#company">Company</a></li>
+        <li class="nav-item"><a class="nav-link" href="#users">Users</a></li>
+        <li class="nav-item"><a class="nav-link" href="#approvalFlows">Approval Flows</a></li>
+        <li class="nav-item"><a class="nav-link" href="#expenses">Expenses</a></li>
+        <li class="nav-item"><a class="nav-link" href="#audit">Audit Logs</a></li>
+        <li class="nav-item"><a class="nav-link" href="login.html">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container container-card">
+
+  <!-- Company Settings -->
+  <div class="card" id="company">
+    <h4>Company Settings</h4>
+    <form id="companyForm">
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <label class="form-label">Company Name</label>
+          <input type="text" class="form-control" id="companyName" value="Acme Corp" required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Country</label>
+          <select class="form-select" id="companyCountry">
+            <option value="IN" selected>India</option>
+            <option value="US">United States</option>
+            <option value="FR">France</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Default Currency</label>
+          <input type="text" class="form-control" id="companyCurrency" value="INR" readonly>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Save Company</button>
+    </form>
+  </div>
+
+  <!-- Users Management -->
+  <div class="card" id="users">
+    <h4>Users Management</h4>
+    <form id="userForm" class="mb-3">
+      <div class="row g-2">
+        <div class="col-md-3">
+          <input type="text" class="form-control" placeholder="Name" id="userName" required>
+        </div>
+        <div class="col-md-3">
+          <input type="email" class="form-control" placeholder="Email" id="userEmail" required>
+        </div>
+        <div class="col-md-2">
+          <select class="form-select" id="userRole" required>
+            <option value="ADMIN">Admin</option>
+            <option value="MANAGER" selected>Manager</option>
+            <option value="EMPLOYEE">Employee</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <select class="form-select" id="userManager">
+            <option value="">No Manager</option>
+            <option value="m1">Manager 1</option>
+            <option value="m2">Manager 2</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-dark w-100">Add User</button>
+        </div>
+      </div>
+    </form>
+
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Name</th><th>Email</th><th>Role</th><th>Manager</th>
+        </tr>
+      </thead>
+      <tbody id="userTable"></tbody>
+    </table>
+  </div>
+
+  <!-- Approval Flows -->
+  <div class="card" id="approvalFlows">
+    <h4>Approval Flows</h4>
+    <form id="flowForm" class="mb-3">
+      <div class="row g-2">
+        <div class="col-md-4">
+          <input type="text" class="form-control" placeholder="Flow Name" id="flowName" required>
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" placeholder="Steps (comma separated: Manager, Finance)" id="flowSteps" required>
+        </div>
+        <div class="col-md-4">
+          <button type="submit" class="btn btn-primary w-100">Create Flow</button>
+        </div>
+      </div>
+    </form>
+    <ul id="flowList"></ul>
+  </div>
+
+  <!-- Expenses -->
+  <div class="card" id="expenses">
+    <h4>All Expenses</h4>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Date</th><th>Employee</th><th>Category</th><th>Amount</th><th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="allExpenses"></tbody>
+    </table>
+  </div>
+
+  <!-- Audit Logs -->
+  <div class="card" id="audit">
+    <h4>Audit Logs</h4>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Entity</th><th>Action</th><th>Actor</th><th>Date</th>
+        </tr>
+      </thead>
+      <tbody id="auditLogs"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<footer>&copy; 2025 Expense Management. Admin Dashboard.</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Dummy Users
+  let users = [
+    {name:'Admin', email:'admin@acme.test', role:'ADMIN', manager:''},
+    {name:'Manager 1', email:'m1@acme.test', role:'MANAGER', manager:''},
+    {name:'Manager 2', email:'m2@acme.test', role:'MANAGER', manager:''},
+    {name:'Employee 1', email:'e1@acme.test', role:'EMPLOYEE', manager:'Manager 1'},
+  ];
+
+  const userTable = document.getElementById('userTable');
+  const flowList = document.getElementById('flowList');
+  const allExpenses = document.getElementById('allExpenses');
+  const auditLogs = document.getElementById('auditLogs');
+
+  function renderUsers(){
+    userTable.innerHTML = '';
+    users.forEach(u => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${u.name}</td><td>${u.email}</td><td>${u.role}</td><td>${u.manager}</td>`;
+      userTable.appendChild(tr);
+    });
+  }
+  renderUsers();
+
+  document.getElementById('userForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const newUser = {
+      name: document.getElementById('userName').value,
+      email: document.getElementById('userEmail').value,
+      role: document.getElementById('userRole').value,
+      manager: document.getElementById('userManager').value
+    };
+    users.push(newUser);
+    renderUsers();
+    this.reset();
+    alert('User added successfully!');
+  });
+
+  // Approval Flow
+  let flows = [];
+  document.getElementById('flowForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const name = document.getElementById('flowName').value;
+    const steps = document.getElementById('flowSteps').value.split(',').map(s=>s.trim());
+    flows.push({name, steps});
+    renderFlows();
+    this.reset();
+  });
+
+  function renderFlows(){
+    flowList.innerHTML = '';
+    flows.forEach(f => {
+      const li = document.createElement('li');
+      li.textContent = `${f.name}: ${f.steps.join(' → ')}`;
+      flowList.appendChild(li);
+    });
+  }
+
+  // Dummy Expenses
+  const expenses = [
+    {date:'2025-10-01', employee:'e1@acme.test', category:'Travel', amount:'100 USD', status:'PENDING'},
+    {date:'2025-10-02', employee:'e2@acme.test', category:'Food', amount:'50 EUR', status:'APPROVED'},
+  ];
+
+  function renderExpenses(){
+    allExpenses.innerHTML = '';
+    expenses.forEach(e=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${e.date}</td><td>${e.employee}</td><td>${e.category}</td><td>${e.amount}</td>
+                      <td class="${e.status==='PENDING'?'status-pending':(e.status==='APPROVED'?'status-approved':'status-rejected')}">${e.status}</td>`;
+      allExpenses.appendChild(tr);
+    });
+  }
+  renderExpenses();
+
+  // Dummy Audit Logs
+  const logs = [
+    {entity:'Expense', action:'Submitted', actor:'e1@acme.test', date:'2025-10-01'},
+    {entity:'User', action:'Added', actor:'Admin', date:'2025-10-01'},
+  ];
+  function renderLogs(){
+    auditLogs.innerHTML = '';
+    logs.forEach(l=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${l.entity}</td><td>${l.action}</td><td>${l.actor}</td><td>${l.date}</td>`;
+      auditLogs.appendChild(tr);
+    });
+  }
+  renderLogs();
+</script>
+
+</body>
+</html>

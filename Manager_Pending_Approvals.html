@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manager Dashboard - Pending Approvals</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; color: #212529; font-family: Arial, sans-serif; }
+    .navbar { background-color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .navbar-brand { font-weight: bold; }
+    .nav-link { color: #212529 !important; }
+    .nav-link:hover { color: #0d6efd !important; }
+    .container-card { margin-top: 40px; }
+    .card { border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 30px; }
+    .btn-action { border-radius: 8px; margin-right: 5px; }
+    table th, table td { vertical-align: middle !important; }
+    footer { text-align: center; padding: 15px; margin-top: 40px; border-top: 1px solid #dee2e6; color: #6c757d; }
+    .modal-lg { max-width: 800px; }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Expense Manager</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#">Pending Approvals</a></li>
+        <li class="nav-item"><a class="nav-link" href="employee-dashboard.html">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="login.html">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container container-card">
+
+  <!-- Pending Approvals Table -->
+  <div class="card">
+    <h4>Pending Approvals</h4>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Submitter</th>
+          <th>Date</th>
+          <th>Category</th>
+          <th>Amount (Original / INR)</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="pendingTable"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- Expense Details Modal -->
+<div class="modal fade" id="expenseModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Expense Details</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Submitter:</strong> <span id="modalSubmitter"></span></p>
+        <p><strong>Date:</strong> <span id="modalDate"></span></p>
+        <p><strong>Category:</strong> <span id="modalCategory"></span></p>
+        <p><strong>Amount:</strong> <span id="modalAmount"></span> / <span id="modalConverted"></span></p>
+        <p><strong>Description:</strong> <span id="modalDescription"></span></p>
+        <p><strong>OCR Extracted:</strong> <span id="modalOCR"></span></p>
+        <p><strong>Receipt:</strong> <a href="#" target="_blank" id="modalReceipt">View</a></p>
+        <div class="mb-3">
+          <label for="approvalComment" class="form-label">Comment</label>
+          <textarea id="approvalComment" class="form-control" rows="2" placeholder="Add comment (optional)"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" id="approveBtn">Approve</button>
+        <button type="button" class="btn btn-danger" id="rejectBtn">Reject</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>&copy; 2025 Expense Management. All rights reserved.</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const pendingExpenses = [
+    {id:1, submitter:'e1@acme.test', date:'2025-10-01', category:'Travel', amount:'100 USD', converted:'8400 INR', description:'Flight to Mumbai', receipt:'#', ocr:'Amount: 100, Date: 2025-10-01, Merchant: Indigo'},
+    {id:2, submitter:'e2@acme.test', date:'2025-10-02', category:'Food', amount:'50 EUR', converted:'4600 INR', description:'Team lunch', receipt:'#', ocr:'Amount: 50, Date: 2025-10-02, Merchant: Restaurant'}
+  ];
+
+  const pendingTable = document.getElementById('pendingTable');
+  const expenseModal = new bootstrap.Modal(document.getElementById('expenseModal'));
+  let selectedExpense = null;
+
+  function renderPending(){
+    pendingTable.innerHTML = '';
+    pendingExpenses.forEach(exp => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${exp.submitter}</td>
+                      <td>${exp.date}</td>
+                      <td>${exp.category}</td>
+                      <td>${exp.amount} / ${exp.converted}</td>
+                      <td><button class="btn btn-sm btn-primary" onclick="openExpense(${exp.id})">View</button></td>`;
+      pendingTable.appendChild(tr);
+    });
+  }
+
+  function openExpense(id){
+    selectedExpense = pendingExpenses.find(e => e.id===id);
+    if(selectedExpense){
+      document.getElementById('modalSubmitter').textContent = selectedExpense.submitter;
+      document.getElementById('modalDate').textContent = selectedExpense.date;
+      document.getElementById('modalCategory').textContent = selectedExpense.category;
+      document.getElementById('modalAmount').textContent = selectedExpense.amount;
+      document.getElementById('modalConverted').textContent = selectedExpense.converted;
+      document.getElementById('modalDescription').textContent = selectedExpense.description;
+      document.getElementById('modalOCR').textContent = selectedExpense.ocr;
+      document.getElementById('modalReceipt').href = selectedExpense.receipt;
+      document.getElementById('approvalComment').value = '';
+      expenseModal.show();
+    }
+  }
+
+  document.getElementById('approveBtn').addEventListener('click', function(){
+    if(selectedExpense){
+      selectedExpense.status = 'Approved';
+      alert(`Expense approved with comment: "${document.getElementById('approvalComment').value}"`);
+      // Remove from pending list
+      const index = pendingExpenses.findIndex(e => e.id===selectedExpense.id);
+      pendingExpenses.splice(index,1);
+      renderPending();
+      expenseModal.hide();
+    }
+  });
+
+  document.getElementById('rejectBtn').addEventListener('click', function(){
+    if(selectedExpense){
+      selectedExpense.status = 'Rejected';
+      alert(`Expense rejected with comment: "${document.getElementById('approvalComment').value}"`);
+      const index = pendingExpenses.findIndex(e => e.id===selectedExpense.id);
+      pendingExpenses.splice(index,1);
+      renderPending();
+      expenseModal.hide();
+    }
+  });
+
+  renderPending();
+</script>
+</body>
+</html>

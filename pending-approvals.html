@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manager Dashboard - Pending Approvals</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; color: #212529; font-family: 'Arial', sans-serif; }
+    .navbar { background-color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .navbar-brand { font-weight: bold; }
+    .nav-link { color: #212529 !important; }
+    .nav-link:hover { color: #0d6efd !important; }
+    .container-card { margin-top: 40px; }
+    .card { border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); padding: 20px; margin-bottom: 30px; }
+    .card h4 { margin-bottom: 20px; font-weight: bold; }
+    .btn-action { border-radius: 8px; margin-right: 5px; }
+    table th, table td { vertical-align: middle !important; }
+    footer { text-align: center; padding: 15px; margin-top: 40px; border-top: 1px solid #dee2e6; color: #6c757d; }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="home.html">Expense Manager</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="employee-dashboard.html">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="login.html">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container container-card">
+
+  <!-- Pending Approvals -->
+  <div class="card">
+    <h4>Pending Approvals</h4>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Employee</th>
+          <th>Category</th>
+          <th>Amount (Original / INR)</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="pendingTable"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- Approve/Reject Modal -->
+<div class="modal fade" id="decisionModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle">Decision</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="decisionForm">
+          <div class="mb-3">
+            <label for="decisionComment" class="form-label">Comment</label>
+            <textarea class="form-control" id="decisionComment" rows="3" placeholder="Enter comment (optional)"></textarea>
+          </div>
+          <button type="submit" class="btn btn-success w-100" id="modalSubmitBtn">Confirm</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>&copy; 2025 Expense Management. All rights reserved.</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const pendingExpenses = [
+    {id:1,date:'2025-10-01',employee:'Employee1',category:'Travel',amount:'100 USD',converted:'8400 INR'},
+    {id:2,date:'2025-10-02',employee:'Employee2',category:'Food',amount:'50 EUR',converted:'4600 INR'}
+  ];
+
+  let currentDecisionId = null;
+  let currentAction = '';
+
+  const pendingTable = document.getElementById('pendingTable');
+
+  function populatePending() {
+    pendingTable.innerHTML = '';
+    pendingExpenses.forEach(exp=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${exp.date}</td>
+                      <td>${exp.employee}</td>
+                      <td>${exp.category}</td>
+                      <td>${exp.amount} / ${exp.converted}</td>
+                      <td>
+                        <button class="btn btn-sm btn-success btn-action" onclick="openDecision(${exp.id},'Approve')">Approve</button>
+                        <button class="btn btn-sm btn-danger btn-action" onclick="openDecision(${exp.id},'Reject')">Reject</button>
+                      </td>`;
+      pendingTable.appendChild(tr);
+    });
+  }
+
+  function openDecision(id, action) {
+    currentDecisionId = id;
+    currentAction = action;
+    document.getElementById('modalTitle').innerText = action + ' Expense';
+    document.getElementById('modalSubmitBtn').innerText = action;
+    const modal = new bootstrap.Modal(document.getElementById('decisionModal'));
+    modal.show();
+  }
+
+  document.getElementById('decisionForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const comment = document.getElementById('decisionComment').value;
+    const expense = pendingExpenses.find(exp=>exp.id===currentDecisionId);
+    if(expense){
+      expense.status = currentAction === 'Approve' ? 'Approved' : 'Rejected';
+      alert(`Expense ${currentAction}d! Comment: ${comment}`);
+      pendingExpenses.splice(pendingExpenses.indexOf(expense),1);
+      populatePending();
+    }
+    document.getElementById('decisionForm').reset();
+    bootstrap.Modal.getInstance(document.getElementById('decisionModal')).hide();
+  });
+
+  populatePending();
+</script>
+</body>
+</html>
